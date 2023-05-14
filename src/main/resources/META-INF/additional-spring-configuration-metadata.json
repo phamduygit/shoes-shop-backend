@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "cloud-dinary.cloud-name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud-dinary.cloud-name'"
+  },
+  {
+    "name": "cloud-dinary.api-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud-dinary.api-secret'"
+  },
+  {
+    "name": "cloud-dinary.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud-dinary.api-key'"
+  }
+]}
