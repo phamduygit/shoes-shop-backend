@@ -3,6 +3,7 @@ package com.shoesshop.backend.service;
 import com.shoesshop.backend.respository.ShoesRepository;
 
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 import com.shoesshop.backend.entity.Shoes;
 
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class ShoesService {
 
     @Autowired
@@ -26,9 +28,35 @@ public class ShoesService {
         return shoesRepository.save(shoes);
     }
 
-    public List<Map<String, Object>> getAllShoes() {
+    public List<Map<String, Object>> getAllShoes(String name, int price, boolean newest) {
+        List<Shoes> filteredListShoes = new ArrayList<>();
+        if (price == 1) {
+            if (name != null && name != "") {
+                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceAsc(name);
+            } else {
+                filteredListShoes = shoesRepository.findAllByOrderByPriceAsc();
+            }
+        } else if (price == -1) {
+            if (name != null && name != "") {
+                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceDesc(name);
+            } else {
+                filteredListShoes = shoesRepository.findAllByOrderByPriceDesc();
+            }
+        } else if (newest) {
+            if (name != null && name != "") {
+                filteredListShoes = shoesRepository.findByNameContainingOrderByCreatedAtDesc(name);
+            } else {
+                filteredListShoes = shoesRepository.findAllByOrderByCreatedAtDesc();
+            }
+        } else {
+            if (name != null) {
+                filteredListShoes = shoesRepository.findByNameContaining(name);
+            } else {
+                filteredListShoes = shoesRepository.findAll();
+            }
+        }
         List<Map<String, Object>> arrShoes = new ArrayList<>();
-        for (Shoes shoes : shoesRepository.findAll()) {
+        for (Shoes shoes : filteredListShoes) {
             Map<String, Object> data = new LinkedHashMap<>();
             data.put("id", shoes.getShoesId());
             data.put("name", shoes.getName());

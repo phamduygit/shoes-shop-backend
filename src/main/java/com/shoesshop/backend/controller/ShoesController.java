@@ -4,6 +4,7 @@ import com.shoesshop.backend.entity.Shoes;
 import com.shoesshop.backend.service.ShoesService;
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,11 +31,18 @@ public class ShoesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String, Object>> getAllShoes() {
-        List<Map<String, Object>> listShoes = shoesService.getAllShoes();
+    public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false) String name, @RequestParam(required = false) String price, @RequestParam(required = false) String newest) {
+        List<Map<String, Object>> filterdListShoes = new ArrayList<>();
+        if (price != null) {
+            filterdListShoes = shoesService.getAllShoes(name, Integer.parseInt(price), false);
+        } else if (newest != null) {
+            filterdListShoes = shoesService.getAllShoes(name, 0, true);
+        } else {
+            filterdListShoes = shoesService.getAllShoes(name, 0, false);
+        }
         Map<String, Object> result = new LinkedHashMap<>();
-        result.put("length", listShoes.size());
-        result.put("data", listShoes);
+        result.put("length", filterdListShoes.size());
+        result.put("data", filterdListShoes);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
