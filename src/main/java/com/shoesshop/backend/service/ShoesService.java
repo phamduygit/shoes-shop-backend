@@ -15,6 +15,9 @@ import java.util.Optional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,35 +31,38 @@ public class ShoesService {
         return shoesRepository.save(shoes);
     }
 
-    public List<Map<String, Object>> getAllShoes(String name, int price, boolean newest) {
-        List<Shoes> filteredListShoes = new ArrayList<>();
+    public Map<String, Object> getAllShoes(String name, int price, boolean newest, int pageNumber, int pageSize) {
+        Map<String, Object> responseObject = new LinkedHashMap<>();
+        Page<Shoes> filteredListShoes;
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
         if (price == 1) {
             if (name != null && name != "") {
-                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceAsc(name);
+                log.info("Shoes name: " + name + ", Page number: " + pageNumber + ", Page size: " + pageSize);
+                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceAsc(name, paging);
             } else {
-                filteredListShoes = shoesRepository.findAllByOrderByPriceAsc();
+                filteredListShoes = shoesRepository.findAllByOrderByPriceAsc(paging);
             }
         } else if (price == -1) {
             if (name != null && name != "") {
-                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceDesc(name);
+                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceDesc(name, paging);
             } else {
-                filteredListShoes = shoesRepository.findAllByOrderByPriceDesc();
+                filteredListShoes = shoesRepository.findAllByOrderByPriceDesc(paging);
             }
         } else if (newest) {
             if (name != null && name != "") {
-                filteredListShoes = shoesRepository.findByNameContainingOrderByCreatedAtDesc(name);
+                filteredListShoes = shoesRepository.findByNameContainingOrderByCreatedAtDesc(name, paging);
             } else {
-                filteredListShoes = shoesRepository.findAllByOrderByCreatedAtDesc();
+                filteredListShoes = shoesRepository.findAllByOrderByCreatedAtDesc(paging);
             }
         } else {
             if (name != null) {
-                filteredListShoes = shoesRepository.findByNameContaining(name);
+                filteredListShoes = shoesRepository.findByNameContaining(name, paging);
             } else {
-                filteredListShoes = shoesRepository.findAll();
+                filteredListShoes = shoesRepository.findAll(paging);
             }
         }
         List<Map<String, Object>> arrShoes = new ArrayList<>();
-        for (Shoes shoes : filteredListShoes) {
+        for (Shoes shoes : filteredListShoes.getContent()) {
             Map<String, Object> data = new LinkedHashMap<>();
             data.put("id", shoes.getShoesId());
             data.put("name", shoes.getName());
@@ -67,7 +73,15 @@ public class ShoesService {
             data.put("priceSales", shoes.getPriceSales());
             arrShoes.add(data);
         }
-        return arrShoes;
+
+        responseObject.put("hasNextPage", filteredListShoes.hasNext());
+        responseObject.put("hasPreviousPage", filteredListShoes.hasPrevious());
+        responseObject.put("totalPages", filteredListShoes.getTotalPages());
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("length", arrShoes.size());
+        data.put("data", arrShoes);
+        responseObject.put("data", data);
+        return responseObject;
     }
 
     public Shoes getShoes(int id) {

@@ -2,16 +2,17 @@ package com.shoesshop.backend.respository;
 
 import com.shoesshop.backend.entity.Shoes;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShoesRepository extends JpaRepository<Shoes, Integer> {
-    List<Shoes> findByNameContainingOrderByPriceAsc(String name);
-    List<Shoes> findByNameContainingOrderByPriceDesc(String name);
-    List<Shoes> findByNameContainingOrderByCreatedAtDesc(String name);
-    List<Shoes> findByNameContaining(String name);
-    List<Shoes> findAllByOrderByPriceAsc();
-    List<Shoes> findAllByOrderByPriceDesc();
-    List<Shoes> findAllByOrderByCreatedAtDesc();
+    Page<Shoes> findByNameContainingOrderByPriceAsc(String name, Pageable paging);
+    Page<Shoes> findByNameContainingOrderByPriceDesc(String name, Pageable paging);
+    Page<Shoes> findByNameContainingOrderByCreatedAtDesc(String name, Pageable paging);
+    Page<Shoes> findByNameContaining(String name, Pageable paging);
+    Page<Shoes> findAllByOrderByPriceAsc(Pageable paging);
+    Page<Shoes> findAllByOrderByPriceDesc(Pageable paging);
+    Page<Shoes> findAllByOrderByCreatedAtDesc(Pageable paging);
+    Page<Shoes> findAll(Pageable paging);
 }

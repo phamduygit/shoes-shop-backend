@@ -4,10 +4,8 @@ import com.shoesshop.backend.entity.Shoes;
 import com.shoesshop.backend.service.ShoesService;
 import jakarta.validation.Valid;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,19 +29,20 @@ public class ShoesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false) String name, @RequestParam(required = false) String price, @RequestParam(required = false) String newest) {
-        List<Map<String, Object>> filterdListShoes = new ArrayList<>();
+    public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false) String name,
+            @RequestParam(required = false) String price, @RequestParam(required = false) String newest,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "8") int pageSize) {
+
+        Map<String, Object> filterdListShoes = new LinkedHashMap<>();
         if (price != null) {
-            filterdListShoes = shoesService.getAllShoes(name, Integer.parseInt(price), false);
+            filterdListShoes = shoesService.getAllShoes(name, Integer.parseInt(price), false, page, pageSize);
         } else if (newest != null) {
-            filterdListShoes = shoesService.getAllShoes(name, 0, true);
+            filterdListShoes = shoesService.getAllShoes(name, 0, true, page, pageSize);
         } else {
-            filterdListShoes = shoesService.getAllShoes(name, 0, false);
+            filterdListShoes = shoesService.getAllShoes(name, 0, false, page, pageSize);
         }
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("length", filterdListShoes.size());
-        result.put("data", filterdListShoes);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(filterdListShoes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
