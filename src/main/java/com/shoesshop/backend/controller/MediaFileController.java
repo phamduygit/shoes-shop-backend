@@ -1,4 +1,4 @@
-package com.shoesshop.backend.media;
+package com.shoesshop.backend.controller;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

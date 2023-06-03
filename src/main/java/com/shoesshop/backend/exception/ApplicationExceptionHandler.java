@@ -1,5 +1,6 @@
 package com.shoesshop.backend.exception;
 
+import com.shoesshop.backend.entity.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
@@ -24,4 +26,12 @@ public class ApplicationExceptionHandler {
         });
         return errors;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ErrorResponse handleDuplicateEntryException(
+            DuplicateEntryException ex) {
+        return ErrorResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).message(ex.getMessage()).build();
+    }
+
 }
