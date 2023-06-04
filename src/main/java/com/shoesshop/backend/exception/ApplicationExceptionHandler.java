@@ -34,4 +34,10 @@ public class ApplicationExceptionHandler {
         return ErrorResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).message(ex.getMessage()).build();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AuthErrorException.class)
+    public ErrorResponse handleAuthErrorException(AuthErrorException authErrorException) {
+        return ErrorResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).message(authErrorException.getMessage()).build();
+    }
+
 }

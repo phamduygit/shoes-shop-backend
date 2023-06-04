@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
 import com.shoesshop.backend.entity.ErrorResponse;
+import com.shoesshop.backend.entity.JwtResponse;
 import com.shoesshop.backend.respository.TokenRepository;
 import com.shoesshop.backend.service.JwtService;
 import io.jsonwebtoken.JwtException;
@@ -97,12 +98,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Gson gson = new Gson();
 
         // Create ErrorResponse object
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setMessage("Invalid token");
-        errorResponse.setHttpStatus(HttpStatus.BAD_REQUEST);
+        JwtResponse jwtResponse = new JwtResponse();
+        jwtResponse.setMessage("Invalid token");
+        jwtResponse.setStatus(HttpStatus.BAD_REQUEST);
+        jwtResponse.setValid(false);
 
         // Create json response
-        String jsonResponse = gson.toJson(errorResponse);
+        String jsonResponse = gson.toJson(jwtResponse);
 
         // Return response object
         PrintWriter out = response.getWriter();
