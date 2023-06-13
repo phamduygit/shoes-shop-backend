@@ -62,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String jwt;
             final String userEmail;
             if (authHeader == null || !authHeader.startsWith("Bearer")) {
+                throwFilterSecurityException(response);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -108,7 +109,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Return response object
         PrintWriter out = response.getWriter();
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         out.print(jsonResponse);

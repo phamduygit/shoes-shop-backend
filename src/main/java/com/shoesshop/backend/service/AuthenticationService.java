@@ -128,4 +128,21 @@ public class AuthenticationService {
         }
         return null;
     }
+
+    public AuthenticationResponse authenticateWithGoogle(String email) {
+        try {
+            User user = userRepository.findByEmail(email).orElseThrow();
+            // Create access token and refresh token with user
+            String jwtToken = jwtService.generateToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } catch (Exception error) {
+            throw new AuthErrorException("Email doesn't exists");
+        }
+    }
 }

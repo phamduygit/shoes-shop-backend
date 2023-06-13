@@ -2,22 +2,22 @@ package com.shoesshop.backend.controller;
 
 import com.shoesshop.backend.entity.AuthenticationRequest;
 import com.shoesshop.backend.entity.AuthenticationResponse;
-import com.shoesshop.backend.entity.JwtResponse;
 import com.shoesshop.backend.entity.RegisterRequest;
-import com.shoesshop.backend.exception.DuplicateEntryException;
 import com.shoesshop.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Log4j2
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -28,7 +28,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
@@ -38,5 +38,16 @@ public class AuthenticationController {
             HttpServletResponse response
     ) throws IOException {
         return ResponseEntity.ok(authenticationService.refreshToken(request, response));
+    }
+
+    @PostMapping(value ="/login-with-google")
+    public ResponseEntity<AuthenticationResponse> loginWithGoogle(@RequestBody Map<String, String> request) {
+        log.info("Email: " + request.get("email"));
+        return ResponseEntity.ok(authenticationService.authenticateWithGoogle(request.get("email")));
+    }
+
+    @PostMapping("/register-with-google")
+    public ResponseEntity<AuthenticationResponse> registerWithGoogle(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authenticationService.register(request));
     }
 }
