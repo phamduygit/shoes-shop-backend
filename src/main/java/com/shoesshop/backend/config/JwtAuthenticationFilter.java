@@ -1,9 +1,6 @@
 package com.shoesshop.backend.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
-import com.shoesshop.backend.entity.ErrorResponse;
 import com.shoesshop.backend.entity.JwtResponse;
 import com.shoesshop.backend.respository.TokenRepository;
 import com.shoesshop.backend.service.JwtService;
@@ -84,10 +81,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    filterChain.doFilter(request, response);
+                } else {
+                    throwFilterSecurityException(response);
                 }
             }
 
-            filterChain.doFilter(request, response);
         } catch (JwtException e) {
             throwFilterSecurityException(response);
         }
@@ -95,13 +94,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private static void throwFilterSecurityException(HttpServletResponse response) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         Gson gson = new Gson();
 
         // Create ErrorResponse object
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setMessage("Invalid token");
-        jwtResponse.setStatus(HttpStatus.BAD_REQUEST);
+        jwtResponse.setStatus(HttpStatus.UNAUTHORIZED);
         jwtResponse.setValid(false);
 
         // Create json response

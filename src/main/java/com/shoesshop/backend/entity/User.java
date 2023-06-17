@@ -35,6 +35,8 @@ public class User implements UserDetails {
 
     private String phoneNumber;
 
+    private String avatar;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
