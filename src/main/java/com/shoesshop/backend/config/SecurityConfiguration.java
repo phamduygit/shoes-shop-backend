@@ -13,6 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static com.shoesshop.backend.entity.Permission.*;
+import static com.shoesshop.backend.entity.Role.ADMIN;
+import static com.shoesshop.backend.entity.Role.USER;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,17 +33,17 @@ public class SecurityConfiguration {
         httpSecurity
                 .cors()
                 .and()
-                .csrf()
-                .disable()
+                .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
-                .permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/shoes/**").permitAll()
-                .anyRequest()
-                .authenticated()
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/shoes/**", "/api/v1/brand-category/**", "/api/v1/promote/**").permitAll()
+                .requestMatchers("/api/v1/shoes/**", "/api/v1/brand-category/**", "/api/v1/promote/**").hasAnyRole(ADMIN.name(), USER.name())
+                .requestMatchers(HttpMethod.POST, "/api/v1/shoes/**", "/api/v1/brand-category/**", "/api/v1/promote/**").hasAnyAuthority(ADMIN_CREATE.name())
+                .requestMatchers(HttpMethod.PUT, "/api/v1/shoes/**", "/api/v1/brand-category/**", "/api/v1/promote/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/shoes/**", "/api/v1/brand-category/**", "/api/v1/promote/**").hasAnyAuthority(ADMIN_DELETE.name())
+                .anyRequest().authenticated()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

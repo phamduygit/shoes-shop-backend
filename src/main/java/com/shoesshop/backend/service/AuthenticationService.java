@@ -3,8 +3,8 @@ package com.shoesshop.backend.service;
 import com.shoesshop.backend.entity.*;
 import com.shoesshop.backend.exception.AuthErrorException;
 import com.shoesshop.backend.exception.DuplicateEntryException;
-import com.shoesshop.backend.respository.TokenRepository;
-import com.shoesshop.backend.respository.UserRepository;
+import com.shoesshop.backend.repository.TokenRepository;
+import com.shoesshop.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +68,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public Map<String, Object> authenticate(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -79,10 +81,19 @@ public class AuthenticationService {
             String refreshToken = jwtService.generateRefreshToken(user);
             revokeAllUserTokens(user);
             saveUserToken(user, jwtToken);
-            return AuthenticationResponse.builder()
-                    .accessToken(jwtToken)
-                    .refreshToken(refreshToken)
-                    .build();
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("accessToken", jwtToken);
+            result.put("refreshToken", refreshToken);
+
+            Map<String, Object> userInfo = new LinkedHashMap<>();
+            userInfo.put("id", user.getId());
+            userInfo.put("firstName", user.getFirstName());
+            userInfo.put("lastName", user.getLastName());
+            userInfo.put("avatar", user.getAvatar());
+            userInfo.put("role", user.getRole());
+
+            result.put("user", userInfo);
+            return  result;
         } catch (Exception e) {
             throw new AuthErrorException("Email or password doesn't exist");
         }

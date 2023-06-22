@@ -40,4 +40,9 @@ public class ApplicationExceptionHandler {
         return ErrorResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).message(authErrorException.getMessage()).build();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotFoundException.class)
+    public ErrorResponse handleNotFoundException(NotFoundException notFoundException) {
+        return ErrorResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).message(notFoundException.getMessage()).build();
+    }
 }

@@ -3,7 +3,7 @@ package com.shoesshop.backend.service;
 import com.shoesshop.backend.entity.User;
 import com.shoesshop.backend.entity.UserRequest;
 import com.shoesshop.backend.entity.UserResponse;
-import com.shoesshop.backend.respository.UserRepository;
+import com.shoesshop.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

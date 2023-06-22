@@ -2,7 +2,7 @@ package com.shoesshop.backend.config;
 
 import com.google.gson.Gson;
 import com.shoesshop.backend.entity.JwtResponse;
-import com.shoesshop.backend.respository.TokenRepository;
+import com.shoesshop.backend.repository.TokenRepository;
 import com.shoesshop.backend.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -22,8 +22,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 
 @Component
@@ -39,8 +44,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        boolean isGetMethod = false;
+        boolean isContainApprovedPath = false;
         String path = request.getRequestURI();
-        return path.contains("/api/v1/shoes");
+        isGetMethod = (Objects.equals(request.getMethod(), "GET"));
+
+        List<String> approvedPath = Arrays.asList("/api/v1/shoes", "/api/v1/brand-category", "/api/v1/promote");
+        for (String item : approvedPath) {
+            isContainApprovedPath = isContainApprovedPath | path.contains(item);
+        }
+        return isGetMethod && isContainApprovedPath;
     }
 
     @Override
@@ -50,50 +63,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        try {
-            if (request.getServletPath().contains("/api/v1/auth")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            final String authHeader = request.getHeader("Authorization");
-            final String jwt;
-            final String userEmail;
-            if (authHeader == null || !authHeader.startsWith("Bearer")) {
-                throwFilterSecurityException(response);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-
-            jwt = authHeader.substring(7);
-            // Get user email from JWT
-            userEmail = jwtService.extractUsername(jwt);
-            log.info("User name: " + userEmail);
-
-            // Check if user mail exists but user does not authentication yet
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Get user object by load username
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-                var isTokenValid = tokenRepository.findByToken(jwt)
-                        .map(t -> !t.isExpired() && !t.isRevoked())
-                        .orElse(false);
-                if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    filterChain.doFilter(request, response);
-                } else {
-                    throwFilterSecurityException(response);
-                }
-            }
-
-        } catch (JwtException e) {
+        if (request.getServletPath().contains("/api/v1/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        String userEmail;
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
             throwFilterSecurityException(response);
+            return;
+        }
+
+        jwt = authHeader.substring(7);
+        // Get user email from JWT
+        userEmail = "";
+        try {
+            userEmail = jwtService.extractUsername(jwt);
+        } catch (Exception exception) {
+            throwFilterSecurityException(response);
+            return;
+        }
+
+        log.info("User name: " + userEmail);
+
+        // Check if user mail exists but user does not authentication yet
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Get user object by load username
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            var isTokenValid = tokenRepository.findByToken(jwt)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                filterChain.doFilter(request, response);
+            } else {
+                throwFilterSecurityException(response);
+            }
         }
 
     }
 
-    private static void throwFilterSecurityException(HttpServletResponse response) throws IOException {
+    private void throwFilterSecurityException(HttpServletResponse response) throws IOException {
         Gson gson = new Gson();
 
         // Create ErrorResponse object

@@ -51,4 +51,9 @@ public class Shoes extends BaseEntity {
     }
 
     private double priceSales;
+
+    @ManyToOne
+    @JoinColumn(name = "brands_id")
+    private BrandCategory brandCategory;
+
 }

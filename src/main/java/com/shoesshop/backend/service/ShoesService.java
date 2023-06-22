@@ -1,6 +1,6 @@
 package com.shoesshop.backend.service;
 
-import com.shoesshop.backend.respository.ShoesRepository;
+import com.shoesshop.backend.repository.ShoesRepository;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;

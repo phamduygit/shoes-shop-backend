@@ -1,0 +1,29 @@
+package com.shoesshop.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "brands")
+public class BrandCategory {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
+    @GenericGenerator(name = "native",strategy = "native")
+    private int id;
+
+    private String image;
+
+    private String name;
+
+    @OneToMany(mappedBy = "brandCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Shoes> books = new ArrayList<>();
+}

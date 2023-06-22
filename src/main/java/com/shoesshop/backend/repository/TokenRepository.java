@@ -1,4 +1,4 @@
-package com.shoesshop.backend.respository;
+package com.shoesshop.backend.repository;
 
 import com.shoesshop.backend.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
