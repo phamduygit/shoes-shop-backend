@@ -8,6 +8,7 @@ import com.shoesshop.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@Log4j2
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -70,12 +71,12 @@ public class AuthenticationService {
 
     public Map<String, Object> authenticate(AuthenticationRequest request) {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
+            var token = new UsernamePasswordAuthenticationToken(
+                    request.getEmail(),
+                    request.getPassword()
             );
+            authenticationManager.authenticate(token);
+            log.info("Email user: " + request.getEmail());
             User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
             String jwtToken = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
@@ -85,6 +86,8 @@ public class AuthenticationService {
             result.put("accessToken", jwtToken);
             result.put("refreshToken", refreshToken);
 
+            log.info("jwt: " + jwtToken);
+
             Map<String, Object> userInfo = new LinkedHashMap<>();
             userInfo.put("id", user.getId());
             userInfo.put("firstName", user.getFirstName());
@@ -93,7 +96,7 @@ public class AuthenticationService {
             userInfo.put("role", user.getRole());
 
             result.put("user", userInfo);
-            return  result;
+            return result;
         } catch (Exception e) {
             throw new AuthErrorException("Email or password doesn't exist");
         }

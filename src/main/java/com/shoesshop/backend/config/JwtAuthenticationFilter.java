@@ -68,10 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         final String authHeader = request.getHeader("Authorization");
+
+        log.info("Header: " + authHeader);
         final String jwt;
         String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer")) {
-            throwFilterSecurityException(response);
+            throwFilterSecurityException(response, "Unauthorized header");
             return;
         }
 
@@ -81,11 +83,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             userEmail = jwtService.extractUsername(jwt);
         } catch (Exception exception) {
-            throwFilterSecurityException(response);
+            throwFilterSecurityException(response, exception.getMessage());
             return;
         }
-
-        log.info("User name: " + userEmail);
 
         // Check if user mail exists but user does not authentication yet
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -100,18 +100,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 filterChain.doFilter(request, response);
             } else {
-                throwFilterSecurityException(response);
+                throwFilterSecurityException(response, "Invalid token!");
             }
         }
 
     }
 
-    private void throwFilterSecurityException(HttpServletResponse response) throws IOException {
+    private void throwFilterSecurityException(HttpServletResponse response, String message) throws IOException {
         Gson gson = new Gson();
+        log.info("Error: " + message);
 
         // Create ErrorResponse object
         JwtResponse jwtResponse = new JwtResponse();
-        jwtResponse.setMessage("Invalid token");
+        jwtResponse.setMessage(message);
         jwtResponse.setStatus(HttpStatus.UNAUTHORIZED);
         jwtResponse.setValid(false);
 

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -18,7 +19,9 @@ public class BrandCategoryController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllBranch() {
-        return ResponseEntity.ok(brandCategoryService.getAll());
+        Map<String, Object> response = new LinkedHashMap<>();
+        response = brandCategoryService.getAll();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping

@@ -11,10 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
 public class JwtService {
 
@@ -56,6 +58,8 @@ public class JwtService {
           UserDetails userDetails,
           long expiration
   ) {
+//    log.info("setIssuedAt: " + (new Date(System.currentTimeMillis())).toString());
+//    log.info("setExpiration: " + (new Date(System.currentTimeMillis() + expiration)).toString());
     return Jwts
             .builder()
             .setClaims(extraClaims)

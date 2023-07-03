@@ -1,5 +1,6 @@
 package com.shoesshop.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,14 +17,15 @@ import java.util.List;
 @Table(name = "brands")
 public class BrandCategory {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-    @GenericGenerator(name = "native",strategy = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private int id;
 
     private String image;
 
     private String name;
 
-    @OneToMany(mappedBy = "brandCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Shoes> books = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brandCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Shoes> listShoes = new ArrayList<>();
 }

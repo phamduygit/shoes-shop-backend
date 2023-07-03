@@ -5,6 +5,7 @@ import com.shoesshop.backend.exception.NotFoundException;
 import com.shoesshop.backend.repository.BrandCategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ public class BrandCategoryService {
         return brandCategoryRepository.save(brandCategory);
     }
 
+//    @Transactional
     public Map<String, Object> get(int id) {
         BrandCategory brandCategory = brandCategoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Current brand doesn't exists with id: " + id));
         Map<String, Object> result = new LinkedHashMap<>();

@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,33 +16,35 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/shoes")
+@RequiredArgsConstructor
 public class ShoesController {
 
-    @Autowired
-    private ShoesService shoesService;
+    private final ShoesService shoesService;
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> saveShoes(@Valid @RequestBody Shoes shoes) {
+    public ResponseEntity<Map<String, Object>> saveShoes(@Valid @RequestBody Shoes shoes, @RequestParam int brandId) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> otherResult = new HashMap<>();
-        result.put("data", shoesService.createNewShoes(shoes));
+        result.put("data", shoesService.createNewShoes(shoes, brandId));
         otherResult.put("data", result);
         return new ResponseEntity<>(otherResult, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false) String name,
-            @RequestParam(required = false) String price, @RequestParam(required = false) String newest,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "8") int pageSize) {
+    public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false, defaultValue = "") String name,
+                                                           @RequestParam(required = false) String price,
+                                                           @RequestParam(required = false) String newest,
+                                                           @RequestParam(required = false, defaultValue = "0") int brandId,
+                                                           @RequestParam(required = false, defaultValue = "0") int page,
+                                                           @RequestParam(required = false, defaultValue = "8") int pageSize) {
 
         Map<String, Object> filterdListShoes = new LinkedHashMap<>();
         if (price != null) {
-            filterdListShoes = shoesService.getAllShoes(name, Integer.parseInt(price), false, page, pageSize);
+            filterdListShoes = shoesService.getAllShoes(name, Integer.parseInt(price), false, brandId, page, pageSize);
         } else if (newest != null) {
-            filterdListShoes = shoesService.getAllShoes(name, 0, true, page, pageSize);
+            filterdListShoes = shoesService.getAllShoes(name, 0, true, brandId, page, pageSize);
         } else {
-            filterdListShoes = shoesService.getAllShoes(name, 0, false, page, pageSize);
+            filterdListShoes = shoesService.getAllShoes(name, 0, false, brandId, page, pageSize);
         }
         return new ResponseEntity<>(filterdListShoes, HttpStatus.OK);
     }
@@ -51,9 +55,16 @@ public class ShoesController {
         return new ResponseEntity<>(shoes, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllShoesByBrandId(@RequestParam int brandId,
+                                                                    @RequestParam(required = false, defaultValue = "0") int page,
+                                                                    @RequestParam(required = false, defaultValue = "8") int pageSize) {
+        return ResponseEntity.ok(shoesService.getAllShoesByBrandId(brandId, page, pageSize));
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Shoes> updateUserById(@PathVariable int id, @Valid @RequestBody Shoes shoes) {
-        Shoes updatedShoes = shoesService.updateUserById(id, shoes);
+    public ResponseEntity<Shoes> updateUserById(@PathVariable int id, @Valid @RequestBody Shoes shoes, @RequestParam int brandId) {
+        Shoes updatedShoes = shoesService.updateUserById(id, shoes, brandId);
         if (updatedShoes == null) {
             return ResponseEntity.notFound().build();
         }

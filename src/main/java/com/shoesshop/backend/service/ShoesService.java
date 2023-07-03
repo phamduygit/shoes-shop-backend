@@ -1,66 +1,31 @@
 package com.shoesshop.backend.service;
 
-import com.shoesshop.backend.repository.ShoesRepository;
-
-import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j2;
-
+import com.shoesshop.backend.entity.BrandCategory;
 import com.shoesshop.backend.entity.Shoes;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.shoesshop.backend.exception.NotFoundException;
+import com.shoesshop.backend.repository.BrandCategoryRepository;
+import com.shoesshop.backend.repository.ShoesRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class ShoesService {
 
-    @Autowired
-    private ShoesRepository shoesRepository;
+    private final ShoesRepository shoesRepository;
 
-    public Shoes createNewShoes(Shoes shoes) {
-        return shoesRepository.save(shoes);
-    }
+    private final BrandCategoryRepository brandCategoryRepository;
 
-    public Map<String, Object> getAllShoes(String name, int price, boolean newest, int pageNumber, int pageSize) {
-        Map<String, Object> responseObject = new LinkedHashMap<>();
-        Page<Shoes> filteredListShoes;
-        Pageable paging = PageRequest.of(pageNumber, pageSize);
-        if (price == 1) {
-            if (name != null && name != "") {
-                log.info("Shoes name: " + name + ", Page number: " + pageNumber + ", Page size: " + pageSize);
-                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceAsc(name, paging);
-            } else {
-                filteredListShoes = shoesRepository.findAllByOrderByPriceAsc(paging);
-            }
-        } else if (price == -1) {
-            if (name != null && name != "") {
-                filteredListShoes = shoesRepository.findByNameContainingOrderByPriceDesc(name, paging);
-            } else {
-                filteredListShoes = shoesRepository.findAllByOrderByPriceDesc(paging);
-            }
-        } else if (newest) {
-            if (name != null && name != "") {
-                filteredListShoes = shoesRepository.findByNameContainingOrderByCreatedAtDesc(name, paging);
-            } else {
-                filteredListShoes = shoesRepository.findAllByOrderByCreatedAtDesc(paging);
-            }
-        } else {
-            if (name != null) {
-                filteredListShoes = shoesRepository.findByNameContaining(name, paging);
-            } else {
-                filteredListShoes = shoesRepository.findAll(paging);
-            }
-        }
+    private static Map<String, Object> setUpPaging(Map<String, Object> responseObject, Page<Shoes> filteredListShoes) {
         List<Map<String, Object>> arrShoes = new ArrayList<>();
         for (Shoes shoes : filteredListShoes.getContent()) {
             Map<String, Object> data = new LinkedHashMap<>();
@@ -84,30 +49,55 @@ public class ShoesService {
         return responseObject;
     }
 
-    public Shoes getShoes(int id) {
-        Optional<Shoes> shoes = shoesRepository.findById(id);
-        if (shoes.isPresent()) {
-            return shoes.get();
-        } else {
-            return null;
-        }
+    public Shoes createNewShoes(Shoes shoes, int brandId) {
+        BrandCategory brandCategory = brandCategoryRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand not found with Id: " + brandId));
+        shoes.setBrandCategory(brandCategory);
+        return shoesRepository.save(shoes);
     }
 
-    public Shoes updateUserById(int id, @Valid Shoes newShoes) {
-        Optional<Shoes> optionalShoes = shoesRepository.findById(id);
-        if (optionalShoes.isPresent()) {
-            Shoes shoes = optionalShoes.get();
-            shoes.setName(newShoes.getName());
-            shoes.setPrice(newShoes.getPrice());
-            shoes.setCoverImage(newShoes.getCoverImage());
-            shoes.setColors(newShoes.getColors());
-            shoes.setSizes(newShoes.getSizes());
-            shoes.setStatus(newShoes.getStatus());
-            shoes.setDescription(newShoes.getDescription());
-            shoes.setPriceSales(newShoes.getPriceSales());
-            return shoesRepository.save(shoes);
+    public Map<String, Object> getAllShoes(String name, int price, boolean newest, int brandId, int pageNumber, int pageSize) {
+        Map<String, Object> responseObject = new LinkedHashMap<>();
+        Page<Shoes> filteredListShoes = null;
+        Pageable paging;
+        if (price == 1) {
+            paging = PageRequest.of(pageNumber, pageSize, Sort.by("price").ascending());
+        } else if (price == -1) {
+            paging = PageRequest.of(pageNumber, pageSize, Sort.by("price").descending());
+        } else if (newest) {
+            paging = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").ascending());
+        } else {
+            paging = PageRequest.of(pageNumber, pageSize);
         }
-        return null;
+
+        if (brandId != 0 && !name.equals("")) {
+            filteredListShoes = shoesRepository.findByNameAndBrandId(name, brandId, paging);
+        } else if (brandId != 0) {
+            filteredListShoes = shoesRepository.findByBrandId(brandId, paging);
+        } else {
+            filteredListShoes = shoesRepository.findByName(name, paging);
+        }
+
+        return setUpPaging(responseObject, filteredListShoes);
+    }
+
+    public Shoes getShoes(int id) {
+        Optional<Shoes> shoes = shoesRepository.findById(id);
+        return shoes.orElse(null);
+    }
+
+    public Shoes updateUserById(int id, @Valid Shoes newShoes, int brandId) {
+        Shoes foundedShoes = shoesRepository.findById(id).orElseThrow(() -> new NotFoundException("Shoes not found by id: " + id));
+        BrandCategory brandCategory = brandCategoryRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand not found with Id: " + brandId));
+        foundedShoes.setName(newShoes.getName());
+        foundedShoes.setPrice(newShoes.getPrice());
+        foundedShoes.setCoverImage(newShoes.getCoverImage());
+        foundedShoes.setColors(newShoes.getColors());
+        foundedShoes.setSizes(newShoes.getSizes());
+        foundedShoes.setStatus(newShoes.getStatus());
+        foundedShoes.setDescription(newShoes.getDescription());
+        foundedShoes.setPriceSales(newShoes.getPriceSales());
+        foundedShoes.setBrandCategory(brandCategory);
+        return shoesRepository.save(foundedShoes);
     }
 
     public boolean deleteShoesById(int id) {
@@ -117,6 +107,13 @@ public class ShoesService {
             return true;
         }
         return false;
+    }
+
+    public Map<String, Object> getAllShoesByBrandId(int brandId, int pageNumber, int pageSize) {
+        Map<String, Object> responseObject = new LinkedHashMap<>();
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
+        Page<Shoes> filteredListShoes = shoesRepository.findByBrandId(brandId, paging);
+        return setUpPaging(responseObject, filteredListShoes);
     }
 }
 
