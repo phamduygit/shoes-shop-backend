@@ -1,8 +1,8 @@
 package com.shoesshop.backend.service;
 
 import com.shoesshop.backend.entity.User;
-import com.shoesshop.backend.entity.UserRequest;
-import com.shoesshop.backend.entity.UserResponse;
+import com.shoesshop.backend.dto.UserRequest;
+import com.shoesshop.backend.dto.UserResponse;
 import com.shoesshop.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -30,6 +30,7 @@ public class UserService {
                     .avatar(user.getAvatar())
                     .email(user.getEmail())
                     .phoneNumber(user.getPhoneNumber())
+                    .role(user.getRole().name())
                     .build();
         }
         return null;

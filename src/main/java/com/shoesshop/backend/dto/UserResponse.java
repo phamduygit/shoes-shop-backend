@@ -1,4 +1,4 @@
-package com.shoesshop.backend.entity;
+package com.shoesshop.backend.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,4 +12,5 @@ public class UserResponse {
     private String avatar;
     private String phoneNumber;
     private String email;
+    private String role;
 }

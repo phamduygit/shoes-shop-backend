@@ -9,9 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +22,7 @@ public class ShoesController {
     private final ShoesService shoesService;
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('admin:create')")
     public ResponseEntity<Map<String, Object>> saveShoes(@Valid @RequestBody Shoes shoes, @RequestParam int brandId) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> otherResult = new HashMap<>();
@@ -63,6 +64,7 @@ public class ShoesController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<Shoes> updateUserById(@PathVariable int id, @Valid @RequestBody Shoes shoes, @RequestParam int brandId) {
         Shoes updatedShoes = shoesService.updateUserById(id, shoes, brandId);
         if (updatedShoes == null) {
@@ -72,6 +74,7 @@ public class ShoesController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('admin:delete')")
     public ResponseEntity<Void> deleteShoes(@PathVariable int id) {
         boolean deleted = shoesService.deleteShoesById(id);
         if (deleted) {

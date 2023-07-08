@@ -1,8 +1,8 @@
 package com.shoesshop.backend.controller;
 
-import com.shoesshop.backend.entity.AuthenticationRequest;
-import com.shoesshop.backend.entity.AuthenticationResponse;
-import com.shoesshop.backend.entity.RegisterRequest;
+import com.shoesshop.backend.dto.AuthenticationRequest;
+import com.shoesshop.backend.dto.AuthenticationResponse;
+import com.shoesshop.backend.dto.RegisterRequest;
 import com.shoesshop.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

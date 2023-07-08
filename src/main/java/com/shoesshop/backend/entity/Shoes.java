@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -57,4 +58,9 @@ public class Shoes extends BaseEntity {
     @JoinColumn(name = "brands_id")
     private BrandCategory brandCategory;
 
+    @OneToMany(mappedBy = "shoes", fetch = FetchType.LAZY)
+    private Set<Favorite> favoriteSet;
+
+    @OneToMany(mappedBy = "shoes", fetch = FetchType.LAZY)
+    private Set<CartItem> cartItems;
 }

@@ -1,6 +1,6 @@
 package com.shoesshop.backend.exception;
 
-import com.shoesshop.backend.entity.ErrorResponse;
+import com.shoesshop.backend.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

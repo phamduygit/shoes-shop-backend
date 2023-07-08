@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,5 +25,5 @@ public class BrandCategory {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "brandCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Shoes> listShoes = new ArrayList<>();
+    private List<Shoes> listShoes;
 }

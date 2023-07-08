@@ -1,20 +1,14 @@
 package com.shoesshop.backend.controller;
 
-import com.shoesshop.backend.entity.AuthenticationResponse;
-import com.shoesshop.backend.entity.JwtResponse;
-import com.shoesshop.backend.entity.UserRequest;
-import com.shoesshop.backend.entity.UserResponse;
-import com.shoesshop.backend.service.AuthenticationService;
+import com.shoesshop.backend.dto.JwtResponse;
+import com.shoesshop.backend.dto.UserRequest;
+import com.shoesshop.backend.dto.UserResponse;
 import com.shoesshop.backend.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/user")

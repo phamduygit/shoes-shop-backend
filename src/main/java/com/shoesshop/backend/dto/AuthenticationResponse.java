@@ -1,4 +1,4 @@
-package com.shoesshop.backend.entity;
+package com.shoesshop.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

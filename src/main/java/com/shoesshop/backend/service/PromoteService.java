@@ -4,7 +4,6 @@ import com.shoesshop.backend.entity.Promote;
 import com.shoesshop.backend.exception.NotFoundException;
 import com.shoesshop.backend.repository.PromoteRepository;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;

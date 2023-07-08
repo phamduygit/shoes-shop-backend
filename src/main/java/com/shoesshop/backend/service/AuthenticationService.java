@@ -1,6 +1,9 @@
 package com.shoesshop.backend.service;
 
 import com.shoesshop.backend.entity.*;
+import com.shoesshop.backend.dto.AuthenticationRequest;
+import com.shoesshop.backend.dto.AuthenticationResponse;
+import com.shoesshop.backend.dto.RegisterRequest;
 import com.shoesshop.backend.exception.AuthErrorException;
 import com.shoesshop.backend.exception.DuplicateEntryException;
 import com.shoesshop.backend.repository.TokenRepository;
@@ -15,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;

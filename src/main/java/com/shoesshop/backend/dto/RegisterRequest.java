@@ -1,5 +1,6 @@
-package com.shoesshop.backend.entity;
+package com.shoesshop.backend.dto;
 
+import com.shoesshop.backend.entity.Role;
 import lombok.Data;
 
 @Data

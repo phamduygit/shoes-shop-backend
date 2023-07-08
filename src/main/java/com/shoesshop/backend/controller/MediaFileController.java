@@ -2,7 +2,7 @@ package com.shoesshop.backend.controller;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.shoesshop.backend.entity.MediaResponse;
+import com.shoesshop.backend.dto.MediaResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
