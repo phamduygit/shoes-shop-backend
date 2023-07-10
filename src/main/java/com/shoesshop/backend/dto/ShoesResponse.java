@@ -1,5 +1,6 @@
 package com.shoesshop.backend.dto;
 
+import com.shoesshop.backend.entity.Shoes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,14 @@ public class ShoesResponse {
     private List<String> colors;
     private String status;
     private double priceSales;
+
+    public void setValue(Shoes shoes) {
+        this.id = shoes.getShoesId();
+        this.name = shoes.getName();
+        this.price = shoes.getPrice();
+        this.coverImage = shoes.getCoverImage();
+        this.colors = shoes.getColors();
+        this.status = shoes.getStatus().name();
+        this.priceSales = shoes.getPriceSales();
+    }
 }

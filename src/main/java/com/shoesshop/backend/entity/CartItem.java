@@ -1,8 +1,16 @@
 package com.shoesshop.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CartItem {
 
     @Id
@@ -16,6 +24,8 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "shoes_id")
     private Shoes shoes;
+
+    private int size;
 
     private int quantity;
 }

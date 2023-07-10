@@ -36,15 +36,14 @@ public class AddressService {
         Map<String, Object> responseResult = new LinkedHashMap<>();
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
         Address address = Address.builder()
-                .address(addressRequest.getAddress())
+                .addressName(addressRequest.getAddressName())
+                .addressDetail(addressRequest.getAddressDetail())
                 .user(user)
-                .selected(addressRequest.isSelected()).build();
+                .selected(addressRequest.isSelected())
+                .build();
         addressRepository.updateSelectedForUserId(user.getId(), false);
         Address savedAddress = addressRepository.save(address);
-        responseResult.put("id", savedAddress.getId());
-        responseResult.put("userId", savedAddress.getUser().getId());
-        responseResult.put("address", savedAddress.getAddress());
-        responseResult.put("selected", savedAddress.isSelected());
+        responseResult.put("data", new AddressResponse(savedAddress));
         return responseResult;
     }
 
@@ -78,7 +77,8 @@ public class AddressService {
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new NotFoundException("Address not found by addressId: " + addressId));
-        address.setAddress(addressRequest.getAddress());
+        address.setAddressName(addressRequest.getAddressName());
+        address.setAddressDetail(addressRequest.getAddressDetail());
         address.setSelected(addressRequest.isSelected());
         addressRepository.updateSelectedForUserId(user.getId(), false);
         Address savedAddress = addressRepository.save(address);

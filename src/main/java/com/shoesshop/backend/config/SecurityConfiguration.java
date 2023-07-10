@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.shoesshop.backend.entity.Permission.*;
+import static com.shoesshop.backend.entity.Role.ADMIN;
 import static com.shoesshop.backend.entity.Role.USER;
 
 @Configuration
@@ -45,15 +46,41 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/favorite/**").hasAnyAuthority(USER_DELETE.name())
 
                                 .requestMatchers(HttpMethod.GET, "/api/v1/shoes/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/favorite/**").hasAnyAuthority(ADMIN_CREATE.name())
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/favorite/**").hasAnyAuthority(ADMIN_UPDATE.name())
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/favorite/**").hasAnyAuthority(ADMIN_DELETE.name())
+                                .requestMatchers(HttpMethod.POST, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_CREATE.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_DELETE.name())
+
+                                .requestMatchers(HttpMethod.GET, "/api/v1/brand-category/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_CREATE.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_DELETE.name())
+
+                                .requestMatchers(HttpMethod.GET, "/api/v1/promote/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/promote/**").hasAnyAuthority(ADMIN_CREATE.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/promote/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/promote/**").hasAnyAuthority(ADMIN_DELETE.name())
 
                                 .requestMatchers("/api/v1/address/**").hasRole(USER.name())
                                 .requestMatchers(HttpMethod.GET, "/api/v1/address/**").hasAuthority(USER_READ.name())
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/address/**").hasAuthority(USER_UPDATE.name())
                                 .requestMatchers(HttpMethod.POST, "/api/v1/address/**").hasAnyAuthority(USER_CREATE.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/address/**").hasAnyAuthority(USER_DELETE.name())
+
+                                .requestMatchers("/api/v1/cart/**").hasRole(USER.name())
+                                .requestMatchers(HttpMethod.GET, "/api/v1/cart/**").hasAuthority(USER_READ.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/cart/**").hasAuthority(USER_UPDATE.name())
+                                .requestMatchers(HttpMethod.POST, "/api/v1/cart/**").hasAnyAuthority(USER_CREATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/cart/**").hasAnyAuthority(USER_DELETE.name())
+
+                                .requestMatchers("/api/v1/order/**").hasAnyRole(USER.name(), ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/api/v1/order/*").hasAuthority(USER_READ.name())
+                                .requestMatchers(HttpMethod.GET, "/api/v1/order/admin/**").hasAuthority(ADMIN_READ.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/order/*").hasAuthority(USER_READ.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/order/admin/**").hasAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(HttpMethod.POST, "/api/v1/order/**").hasAnyAuthority(USER_CREATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/order/**").hasAnyAuthority(USER_DELETE.name())
+
+                                .requestMatchers("/uploadImage").hasAnyRole(USER.name(), ADMIN.name())
 
                                 .anyRequest().authenticated()
 

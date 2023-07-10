@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AddressRequest {
-    private String address;
+    private String addressName;
+    private String addressDetail;
     private boolean selected;
 }

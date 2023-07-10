@@ -63,4 +63,7 @@ public class Shoes extends BaseEntity {
 
     @OneToMany(mappedBy = "shoes", fetch = FetchType.LAZY)
     private Set<CartItem> cartItems;
+
+    @OneToMany(mappedBy = "shoes", fetch = FetchType.LAZY)
+    private Set<Order> orders;
 }

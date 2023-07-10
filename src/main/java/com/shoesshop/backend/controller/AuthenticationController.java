@@ -3,6 +3,7 @@ package com.shoesshop.backend.controller;
 import com.shoesshop.backend.dto.AuthenticationRequest;
 import com.shoesshop.backend.dto.AuthenticationResponse;
 import com.shoesshop.backend.dto.RegisterRequest;
+import com.shoesshop.backend.exception.AuthErrorException;
 import com.shoesshop.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +38,10 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
+        AuthenticationResponse authenticationResponse =authenticationService.refreshToken(request, response);
+        if (authenticationResponse == null) {
+            throw new AuthErrorException("Invalid refresh token");
+        }
         return ResponseEntity.ok(authenticationService.refreshToken(request, response));
     }
 

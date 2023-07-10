@@ -45,10 +45,13 @@ public class User implements UserDetails {
     private List<Token> tokens;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    Set<Favorite> favoriteSet;
+    private Set<Favorite> favoriteSet;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    Set<Address> addresses;
+    private Set<Address> addresses;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Order> orders;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

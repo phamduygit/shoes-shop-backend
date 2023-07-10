@@ -23,5 +23,7 @@ public class Address {
 
     private boolean selected;
 
-    private String address;
+    private String addressName;
+
+    private String addressDetail;
 }
