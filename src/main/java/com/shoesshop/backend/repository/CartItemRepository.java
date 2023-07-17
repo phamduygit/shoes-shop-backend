@@ -14,4 +14,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
     @Query(value = "SELECT * FROM cart_item WHERE shoes_id = ?1 AND cart_id = ?2", nativeQuery = true)
     Optional<CartItem> findByShoesIdAndCartId(int shoesId, int cartId);
     List<CartItem> findAllByCartId(int cartId);
+    @Query("SELECT SUM(cartItem.shoes.price) FROM CartItem cartItem where cartItem.cart.id = ?1")
+    Double calculateTotalPriceByCartId(int cartId);
 }

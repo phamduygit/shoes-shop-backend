@@ -49,7 +49,7 @@ public class Order {
         PREPARE, IN_DELIVERY, WAIT_FOR_RECEIVE, COMPLETE
     }
     public enum PaymentMethod {
-        CASH, CART, ELECTRONIC_WALLET
+        CASH, PAYPAL, GOOGLE_PAY, CARD
     }
 
     public enum ShippingMethod {

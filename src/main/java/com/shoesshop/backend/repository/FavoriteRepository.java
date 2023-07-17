@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     @Query(value = """
@@ -19,4 +21,10 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
             """,
             nativeQuery = true)
     Page<Favorite> findAllByUserId(int userId, Pageable pageable);
+
+    @Query(value = "SELECT * FROM FAVORITE WHERE shoes_id = ?1 AND user_id = ?2", nativeQuery = true)
+    Optional<Favorite> findByShoesIdAndUserId(int shoesId, int userId);
+
+    @Query(value = "DELETE FROM favorite WHERE shoes_id = ?1 AND user_id = ?2", nativeQuery = true)
+    void deleteFavoriteByShoesId(int shoesId, int userId);
 }

@@ -1,16 +1,24 @@
 package com.shoesshop.backend.service;
 
+import com.shoesshop.backend.dto.ShoesDetailResponse;
 import com.shoesshop.backend.entity.BrandCategory;
+import com.shoesshop.backend.entity.Favorite;
 import com.shoesshop.backend.entity.Shoes;
+import com.shoesshop.backend.entity.User;
 import com.shoesshop.backend.exception.NotFoundException;
 import com.shoesshop.backend.repository.BrandCategoryRepository;
+import com.shoesshop.backend.repository.FavoriteRepository;
 import com.shoesshop.backend.repository.ShoesRepository;
+import com.shoesshop.backend.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,7 +31,20 @@ public class ShoesService {
 
     private final BrandCategoryRepository brandCategoryRepository;
 
-    private static Map<String, Object> setUpPaging(Map<String, Object> responseObject, Page<Shoes> filteredListShoes) {
+    private final FavoriteRepository favoriteRepository;
+
+    private final UserRepository userRepository;
+
+    private Map<String, Object> setUpPaging(Map<String, Object> responseObject, Page<Shoes> filteredListShoes) {
+        int userId = 0;
+        Map<String, Object> responseResult = new LinkedHashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
+            userId = user.getId();
+        }
+
         List<Map<String, Object>> arrShoes = new ArrayList<>();
         for (Shoes shoes : filteredListShoes.getContent()) {
             Map<String, Object> data = new LinkedHashMap<>();
@@ -34,6 +55,14 @@ public class ShoesService {
             data.put("colors", shoes.getColors());
             data.put("status", shoes.getStatus());
             data.put("priceSales", shoes.getPriceSales());
+            if (userId == 0) {
+                data.put("favorite", false);
+            } else {
+                Optional<Favorite> favorite = favoriteRepository.findByShoesIdAndUserId(shoes.getShoesId(), userId);
+                data.put("favorite", favorite.isPresent());
+            }
+
+
             arrShoes.add(data);
         }
 
@@ -78,9 +107,22 @@ public class ShoesService {
         return setUpPaging(responseObject, filteredListShoes);
     }
 
-    public Shoes getShoes(int id) {
-        Optional<Shoes> shoes = shoesRepository.findById(id);
-        return shoes.orElse(null);
+    public ShoesDetailResponse getShoes(int id) {
+        Shoes shoes = shoesRepository.findById(id).orElseThrow(() -> new NotFoundException("Shoes not found by id: " + id));
+        int userId = 0;
+        Map<String, Object> responseResult = new LinkedHashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            User user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
+            userId = user.getId();
+        }
+        if (userId == 0) {
+            return new ShoesDetailResponse(shoes, false);
+        } else {
+            Optional<Favorite> favorite = favoriteRepository.findByShoesIdAndUserId(shoes.getShoesId(), userId);
+            return new ShoesDetailResponse(shoes, favorite.isPresent());
+        }
     }
 
     public Shoes updateUserById(int id, @Valid Shoes newShoes, int brandId) {

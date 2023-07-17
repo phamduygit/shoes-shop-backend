@@ -71,6 +71,40 @@ public class CartService {
         return responseResult;
     }
 
+    public Map<String, Object> getAllCartItem() {
+        Map<String, Object> responseResult = new LinkedHashMap<>();
+        // get card id for user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication instanceof AnonymousAuthenticationToken)) {
+            return null;
+        }
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseGet(() -> {
+            // If cart isn't existed create new cart for user
+            Cart newCart = Cart.builder().user(user).items(new ArrayList<>()).totalPrice(0).build();
+            return cartRepository.save(newCart);
+        });
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
+
+        // Create response object
+        List<CartItemResponse> listItemResponse = new ArrayList<>();
+        for (CartItem item : cartItems) {
+            CartItemResponse itemResponse = new CartItemResponse();
+            itemResponse.setValue(item);
+            listItemResponse.add(itemResponse);
+        }
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("length", listItemResponse.size());
+        data.put("list", listItemResponse);
+
+        responseResult.put("cartId", cart.getId());
+        responseResult.put("totalPrice", cart.getTotalPrice());
+        responseResult.put("data", data);
+
+        return responseResult;
+    }
     public CartItemResponse getCartDetail(int cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NotFoundException("Not found cart item by id: " + cartItemId));
@@ -99,8 +133,11 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findByShoesIdAndCartId(shoes.getShoesId(), cart.getId())
                 .orElse(CartItem.builder().shoes(shoes).cart(cart).quantity(0).build());
         cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
+        cartItem.setSize(cartItemRequest.getSize());
         CartItem savedCartItem = cartItemRepository.save(cartItem);
-
+        double totalPrice = cartItemRepository.calculateTotalPriceByCartId(cartItem.getCart().getId());
+        cart.setTotalPrice(totalPrice);
+        cartRepository.save(cart);
         // Create response object
         CartItemResponse cartItemResponse = new CartItemResponse();
         cartItemResponse.setValue(savedCartItem);
@@ -111,6 +148,7 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new NotFoundException("Not found cart item by id: " + cartItemId));
         cartItem.setQuantity(cartItemRequest.getQuantity());
+        cartItem.setSize(cartItemRequest.getSize());
         CartItem savedCartItem = cartItemRepository.save(cartItem);
 
         // Create response object

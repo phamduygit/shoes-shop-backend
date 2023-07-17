@@ -2,6 +2,7 @@ package com.shoesshop.backend.config;
 
 import com.google.gson.Gson;
 import com.shoesshop.backend.dto.JwtResponse;
+import com.shoesshop.backend.entity.Token;
 import com.shoesshop.backend.repository.TokenRepository;
 import com.shoesshop.backend.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -38,19 +39,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenRepository tokenRepository;
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        boolean isGetMethod = false;
-        boolean isContainApprovedPath = false;
-        String path = request.getRequestURI();
-        isGetMethod = (Objects.equals(request.getMethod(), "GET"));
-
-        List<String> approvedPath = Arrays.asList("/api/v1/shoes", "/api/v1/brand-category", "/api/v1/promote");
-        for (String item : approvedPath) {
-            isContainApprovedPath = isContainApprovedPath | path.contains(item);
-        }
-        return isGetMethod && isContainApprovedPath;
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        boolean isGetMethod = false;
+//        boolean isContainApprovedPath = false;
+//        String path = request.getRequestURI();
+//        isGetMethod = (Objects.equals(request.getMethod(), "GET"));
+//
+//        List<String> approvedPath = Arrays.asList("/api/v1/shoes", "/api/v1/brand-category", "/api/v1/promote");
+//        for (String item : approvedPath) {
+//            isContainApprovedPath = isContainApprovedPath | path.contains(item);
+//        }
+//        return isGetMethod && isContainApprovedPath;
+//    }
 
     @Override
     protected void doFilterInternal(
@@ -58,6 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        List<String> approvedPath = Arrays.asList("/api/v1/auth", "/api/v1/shoes", "/api/v1/brand-category", "/api/v1/promote");
 
         if (request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
@@ -69,6 +72,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer")) {
+            for (String item : approvedPath) {
+                if (request.getServletPath().contains(item)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
             throwFilterSecurityException(response, "Unauthorized header");
             return;
         }

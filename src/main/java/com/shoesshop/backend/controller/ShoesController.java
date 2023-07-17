@@ -1,5 +1,6 @@
 package com.shoesshop.backend.controller;
 
+import com.shoesshop.backend.dto.ShoesDetailResponse;
 import com.shoesshop.backend.entity.Shoes;
 import com.shoesshop.backend.service.ShoesService;
 import jakarta.validation.Valid;
@@ -32,7 +33,6 @@ public class ShoesController {
     }
 
     @GetMapping("/all")
-//    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     public ResponseEntity<Map<String, Object>> getAllShoes(@RequestParam(required = false, defaultValue = "") String name,
                                                            @RequestParam(required = false) String price,
                                                            @RequestParam(required = false) String newest,
@@ -52,14 +52,12 @@ public class ShoesController {
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
-    public ResponseEntity<Shoes> getShoes(@PathVariable int id) {
-        Shoes shoes = shoesService.getShoes(id);
+    public ResponseEntity<ShoesDetailResponse> getShoes(@PathVariable int id) {
+        ShoesDetailResponse shoes = shoesService.getShoes(id);
         return new ResponseEntity<>(shoes, HttpStatus.OK);
     }
 
     @GetMapping
-//    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     public ResponseEntity<Map<String, Object>> getAllShoesByBrandId(@RequestParam int brandId,
                                                                     @RequestParam(required = false, defaultValue = "0") int page,
                                                                     @RequestParam(required = false, defaultValue = "8") int pageSize) {

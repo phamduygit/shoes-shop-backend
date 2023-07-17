@@ -20,6 +20,7 @@ public class ShoesResponse {
     private List<String> colors;
     private String status;
     private double priceSales;
+    private boolean favorite;
 
     public void setValue(Shoes shoes) {
         this.id = shoes.getShoesId();
@@ -29,5 +30,17 @@ public class ShoesResponse {
         this.colors = shoes.getColors();
         this.status = shoes.getStatus().name();
         this.priceSales = shoes.getPriceSales();
+        this.favorite = false;
+    }
+
+    public void setValue(Shoes shoes, boolean favorite) {
+        this.id = shoes.getShoesId();
+        this.name = shoes.getName();
+        this.price = shoes.getPrice();
+        this.coverImage = shoes.getCoverImage();
+        this.colors = shoes.getColors();
+        this.status = shoes.getStatus().name();
+        this.priceSales = shoes.getPriceSales();
+        this.favorite = favorite;
     }
 }

@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class CartItemRequest {
     private int shoesId;
     private int quantity;
+    private int size;
 }

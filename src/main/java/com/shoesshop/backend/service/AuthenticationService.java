@@ -62,13 +62,13 @@ public class AuthenticationService {
     }
 
     private void saveUserToken(User user, String accessToken) {
-        Token token = Token.builder()
+        Token token = tokenRepository.findByToken(accessToken).orElse(Token.builder()
                 .user(user)
                 .token(accessToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
                 .revoked(false)
-                .build();
+                .build());
         tokenRepository.save(token);
     }
 
@@ -117,7 +117,6 @@ public class AuthenticationService {
         tokenRepository.saveAll(validUserTokens);
     }
 
-    @Transactional
     public AuthenticationResponse refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
@@ -135,13 +134,12 @@ public class AuthenticationService {
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
-                tokenRepository.deleteAllByUserId(user.getId());
+                revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                var authResponse = AuthenticationResponse.builder()
+                return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
-                return authResponse;
             }
         }
         return null;

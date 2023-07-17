@@ -42,6 +42,7 @@ public class AddressService {
                 .selected(addressRequest.isSelected())
                 .build();
         addressRepository.updateSelectedForUserId(user.getId(), false);
+        address.setSelected(true);
         Address savedAddress = addressRepository.save(address);
         responseResult.put("data", new AddressResponse(savedAddress));
         return responseResult;

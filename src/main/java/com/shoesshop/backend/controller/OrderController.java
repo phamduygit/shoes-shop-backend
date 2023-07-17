@@ -22,10 +22,10 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize(value = "hasAuthority('user:read')")
-    public ResponseEntity<Map<String, Object>> getOrderForUser(@RequestParam(required = true, defaultValue = "PREPARE")Order.ShippingStatus shippingStatus,
+    public ResponseEntity<Map<String, Object>> getOrderForUser(@RequestParam(defaultValue = "false") boolean isCompleted,
                                                                @RequestParam(required = false, defaultValue = "0") int pageNumber,
                                                                @RequestParam(required = false, defaultValue = "8") int pageSize) {
-        return ResponseEntity.ok(orderService.getNotCompleteOrderList(shippingStatus, pageNumber, pageSize));
+        return ResponseEntity.ok(orderService.getNotCompleteOrderList(isCompleted, pageNumber, pageSize));
     }
 
     @GetMapping("/admin")

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class CartItemResponse {
     private int itemId;
     private ShoesResponse shoes;
+    private int size;
     private int quantity;
 
     public void setValue(CartItem item) {
@@ -21,5 +22,6 @@ public class CartItemResponse {
         tempShoes.setValue(item.getShoes());
         shoes = tempShoes;
         this.quantity = item.getQuantity();
+        this.size = item.getSize();
     }
 }

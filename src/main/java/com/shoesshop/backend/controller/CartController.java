@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@PreAuthorize(value = "hasAuthority('USER'))")
+@PreAuthorize("hasRole('USER')")
 @RequestMapping(value = "/api/v1/cart")
 public class CartController {
     private final CartService cartService;
@@ -23,6 +23,12 @@ public class CartController {
     public ResponseEntity<Map<String, Object>> getCart(@RequestParam(required = false, defaultValue = "0") int pageNumber,
                                                        @RequestParam(required = false, defaultValue = "8") int pageSize) {
         return ResponseEntity.ok(cartService.getCart(pageNumber, pageSize));
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize(value = "hasAuthority('user:read')")
+    public ResponseEntity<Map<String, Object>> getAllCartItem() {
+        return ResponseEntity.ok(cartService.getAllCartItem());
     }
 
     @GetMapping("/{id}")

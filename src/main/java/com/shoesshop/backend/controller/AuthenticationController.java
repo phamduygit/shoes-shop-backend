@@ -38,11 +38,11 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        AuthenticationResponse authenticationResponse =authenticationService.refreshToken(request, response);
+        AuthenticationResponse authenticationResponse = authenticationService.refreshToken(request, response);
         if (authenticationResponse == null) {
             throw new AuthErrorException("Invalid refresh token");
         }
-        return ResponseEntity.ok(authenticationService.refreshToken(request, response));
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @PostMapping(value ="/login-with-google")

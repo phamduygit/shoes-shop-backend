@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class OrderResponse {
     private int id;
     private String productName;
+    private String imageUrl;
     private int size;
     private int quantity;
     private String shippingStatus;
@@ -33,5 +34,6 @@ public class OrderResponse {
         this.userId = order.getUser().getId();
         this.rating = order.getRating();
         this.comment = order.getComment();
+        this.imageUrl = order.getShoes().getCoverImage();
     }
 }

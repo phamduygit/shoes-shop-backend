@@ -57,6 +57,7 @@ public class FavoriteService {
                 data.put("colors", shoes.getColors());
                 data.put("status", shoes.getStatus());
                 data.put("priceSales", shoes.getPriceSales());
+                data.put("favorite", true);
                 arrShoes.add(data);
             }
             result.put("hasNextPage", listFavorite.hasNext());
@@ -91,6 +92,7 @@ public class FavoriteService {
                     .colors(favoriteShoes.getColors())
                     .status(favoriteShoes.getStatus().name())
                     .priceSales(favoriteShoes.getPriceSales())
+                    .favorite(true)
                     .build();
             result.put("shoes", shoesResponse);
             return result;
@@ -100,7 +102,18 @@ public class FavoriteService {
     }
 
     public void deleteFavorite(int favoriteId) {
-        shoesRepository.findById(favoriteId).orElseThrow(() -> new NotFoundException("Favorite not found by id: " + favoriteId));
+        favoriteRepository.findById(favoriteId).orElseThrow(() -> new NotFoundException("Favorite not found by id: " + favoriteId));
         favoriteRepository.deleteById(favoriteId);
+    }
+
+    public void deleteFavoriteByShoesId(int shoesId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication instanceof AnonymousAuthenticationToken)) {
+            return;
+        }
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
+        Favorite favorite = favoriteRepository.findByShoesIdAndUserId(shoesId, user.getId()).orElseThrow(() -> new NotFoundException("Favorite not found by id: " + shoesId));
+        favoriteRepository.deleteById(favorite.getId());
+        return;
     }
 }

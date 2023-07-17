@@ -38,4 +38,10 @@ public class FavoriteController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/shoes/{id}")
+    @PreAuthorize("hasAuthority('user:delete')")
+    public ResponseEntity<Void> removeFavoriteByShoes(@PathVariable int id) {
+        favoriteService.deleteFavoriteByShoesId(id);
+        return ResponseEntity.noContent().build();
+    }
 }

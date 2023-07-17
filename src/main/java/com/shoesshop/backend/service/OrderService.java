@@ -33,7 +33,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
 
-    public Map<String, Object> getNotCompleteOrderList(Order.ShippingStatus shippingStatus, int pageNumber, int pageSize) {
+    public Map<String, Object> getNotCompleteOrderList(boolean isCompleted, int pageNumber, int pageSize) {
         Map<String, Object> responseResult = new LinkedHashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if ((authentication instanceof AnonymousAuthenticationToken)) {
@@ -42,7 +42,12 @@ public class OrderService {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new NotFoundException("User not found by email: " + authentication.getName()));
         Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<Order> orders = orderRepository.findAllByUserIdAndShippingStatus(user.getId(), shippingStatus, page);
+        Page<Order> orders;
+        if (isCompleted) {
+            orders = orderRepository.findAllByUserIdAndShippingStatus(user.getId(), Order.ShippingStatus.COMPLETE, page);
+        } else {
+            orders = orderRepository.findAllByUserIdAndWithoutShippingStatus(user.getId(), Order.ShippingStatus.COMPLETE.name(), page);
+        }
 
         List<OrderResponse> listOrderResponse = new ArrayList<>();
         for (Order order : orders.getContent()) {
@@ -112,7 +117,7 @@ public class OrderService {
     public OrderResponse addRatingAndComment(int orderId, RatingRequest ratingRequest) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found by id: " + orderId));
-        if (order.getShippingStatus().name() != "COMPLETE") {
+        if (!order.getShippingStatus().name().equals("COMPLETE")) {
             throw new NotFoundException("The order not completed");
         }
         order.setRating(ratingRequest.getRating());
