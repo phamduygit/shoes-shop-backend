@@ -21,13 +21,14 @@ import java.util.Map;
 
 @RestController
 @Log4j2
-@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
+@PreAuthorize(value = "hasAnyRole('ADMIN, USER')")
 public class MediaFileController {
 
     @Autowired
     private Environment environment;
 
     @PostMapping("/uploadImage")
+    @PreAuthorize(value = "hasAnyAuthority('user:create', 'admin:create')")
     public ResponseEntity<MediaResponse> uploadImage(@RequestParam("image")MultipartFile image) {
         log.info(environment.getProperty("my-secret-key"));
         Map<String, String> config = new HashMap<>();

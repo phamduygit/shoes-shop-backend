@@ -4,12 +4,14 @@ import com.shoesshop.backend.dto.CartItemResponse;
 import com.shoesshop.backend.dto.OrderRequest;
 import com.shoesshop.backend.dto.OrderResponse;
 import com.shoesshop.backend.dto.RatingRequest;
+import com.shoesshop.backend.entity.Cart;
 import com.shoesshop.backend.entity.CartItem;
 import com.shoesshop.backend.entity.Order;
 import com.shoesshop.backend.entity.User;
 import com.shoesshop.backend.exception.DuplicateEntryException;
 import com.shoesshop.backend.exception.NotFoundException;
 import com.shoesshop.backend.repository.CartItemRepository;
+import com.shoesshop.backend.repository.CartRepository;
 import com.shoesshop.backend.repository.OrderRepository;
 import com.shoesshop.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +35,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
     public Map<String, Object> getNotCompleteOrderList(boolean isCompleted, int pageNumber, int pageSize) {
         Map<String, Object> responseResult = new LinkedHashMap<>();
@@ -75,6 +79,12 @@ public class OrderService {
         return responseResult;
     }
 
+    public OrderResponse getOrder(int orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found by Id: " + orderId));
+        return new OrderResponse(order);
+    }
+
+    @Transactional
     public Map<String, Object> createOrder(OrderRequest orderRequest) {
         Map<String, Object> responseResult = new LinkedHashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -103,6 +113,7 @@ public class OrderService {
         responseResult.put("length", listOrderResponse.size());
         responseResult.put("list", listOrderResponse);
         // Delete cart with id
+        cartItemRepository.deleteByCartId(orderRequest.getCartId());
         return responseResult;
     }
 

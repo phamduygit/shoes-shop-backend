@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +24,7 @@ import static com.shoesshop.backend.entity.Role.USER;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity
+@EnableMethodSecurity()
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -34,7 +36,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
@@ -45,16 +47,19 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/favorite/**").hasAnyAuthority(USER_CREATE.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/favorite/**").hasAnyAuthority(USER_DELETE.name())
 
+                                .requestMatchers("/api/v1/shoes/**").hasAnyRole(ADMIN.name(), USER.name(), "ANONYMOUS")
                                 .requestMatchers(HttpMethod.GET, "/api/v1/shoes/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_CREATE.name())
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_UPDATE.name())
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/shoes/**").hasAnyAuthority(ADMIN_DELETE.name())
+                                .requestMatchers(HttpMethod.POST, "/api/v1/shoes/**").hasAuthority(ADMIN_CREATE.name())
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/shoes/**").hasAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/shoes/**").hasAuthority(ADMIN_DELETE.name())
 
+                                .requestMatchers("/api/v1/brand-category/**").hasAnyRole(ADMIN.name(), USER.name(), "ANONYMOUS")
                                 .requestMatchers(HttpMethod.GET, "/api/v1/brand-category/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_UPDATE.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/brand-category/**").hasAnyAuthority(ADMIN_DELETE.name())
 
+                                .requestMatchers("/api/v1/promote/**").hasAnyRole(ADMIN.name(), USER.name(), "ANONYMOUS")
                                 .requestMatchers(HttpMethod.GET, "/api/v1/promote/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/promote/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/promote/**").hasAnyAuthority(ADMIN_UPDATE.name())
@@ -80,8 +85,10 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/order/**").hasAnyAuthority(USER_CREATE.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/order/**").hasAnyAuthority(USER_DELETE.name())
 
-                                .requestMatchers("/uploadImage").hasAnyRole(USER.name(), ADMIN.name())
 
+
+                                .requestMatchers("/uploadImage/**").hasAnyRole(USER.name(), ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/uploadImage/**").hasAnyAuthority(USER_CREATE.name(), ADMIN_CREATE.name())
                                 .anyRequest().authenticated()
 
                 )

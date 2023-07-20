@@ -5,6 +5,7 @@ import com.shoesshop.backend.service.BrandCategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/brand-category")
+@PreAuthorize("hasAnyRole('ANONYMOUS', 'ADMIN', 'USER')")
 public class BrandCategoryController {
 
     private final BrandCategoryService brandCategoryService;
@@ -25,11 +27,13 @@ public class BrandCategoryController {
     }
 
     @PostMapping
+    @PreAuthorize(value = "hasAuthority('admin:create')")
     public ResponseEntity<BrandCategory> addBranch(@RequestBody BrandCategory brandCategory) {
         return new ResponseEntity<>(brandCategoryService.add(brandCategory), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(value = "hasAuthority('admin:update')")
     public ResponseEntity<BrandCategory> updateBranch(@PathVariable int id, @RequestBody BrandCategory brandCategory) {
         return ResponseEntity.ok(brandCategoryService.update(id, brandCategory));
     }
@@ -40,6 +44,7 @@ public class BrandCategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(value = "hasAuthority('admin:delete')")
     public ResponseEntity<Void> deleteBrand(@PathVariable int id) {
         brandCategoryService.delete(id);
         return ResponseEntity.noContent().build();

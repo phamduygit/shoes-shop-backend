@@ -61,6 +61,7 @@ public class AuthenticationService {
                 .build();
     }
 
+    @Transactional
     private void saveUserToken(User user, String accessToken) {
         Token token = tokenRepository.findByToken(accessToken).orElse(Token.builder()
                 .user(user)
@@ -69,7 +70,13 @@ public class AuthenticationService {
                 .expired(false)
                 .revoked(false)
                 .build());
-        tokenRepository.save(token);
+
+        try {
+            tokenRepository.save(token);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEntryException("An account is already registered with your email");
+        }
+
     }
 
     public Map<String, Object> authenticate(AuthenticationRequest request) {

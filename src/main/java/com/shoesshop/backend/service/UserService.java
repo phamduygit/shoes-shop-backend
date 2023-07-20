@@ -10,6 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -59,5 +62,15 @@ public class UserService {
                     .build();
         }
         return null;
+    }
+
+    public List<UserResponse> getAllUser() {
+        List<UserResponse> responseResult = new ArrayList<>();
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            responseResult.add(new UserResponse(user));
+        }
+
+        return  responseResult;
     }
 }

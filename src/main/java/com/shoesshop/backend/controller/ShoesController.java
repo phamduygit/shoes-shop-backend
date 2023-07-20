@@ -9,15 +9,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/shoes")
-@RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ANONYMOUS', 'ADMIN', 'USER')")
 public class ShoesController {
 
     private final ShoesService shoesService;

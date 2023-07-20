@@ -16,4 +16,5 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
     List<CartItem> findAllByCartId(int cartId);
     @Query("SELECT SUM(cartItem.shoes.price) FROM CartItem cartItem where cartItem.cart.id = ?1")
     Double calculateTotalPriceByCartId(int cartId);
+    void deleteByCartId(int cartId);
 }

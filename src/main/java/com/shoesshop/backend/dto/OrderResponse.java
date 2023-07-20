@@ -22,6 +22,7 @@ public class OrderResponse {
     private int userId;
     private int rating;
     private String comment;
+    private String address;
 
     public OrderResponse(Order order) {
         this.id = order.getId();
@@ -35,5 +36,6 @@ public class OrderResponse {
         this.rating = order.getRating();
         this.comment = order.getComment();
         this.imageUrl = order.getShoes().getCoverImage();
+        this.address = order.getAddress();
     }
 }

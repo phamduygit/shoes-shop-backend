@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +39,8 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
+        log.info("refresh-token");
+
         AuthenticationResponse authenticationResponse = authenticationService.refreshToken(request, response);
         if (authenticationResponse == null) {
             throw new AuthErrorException("Invalid refresh token");

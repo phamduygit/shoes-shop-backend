@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -25,8 +27,12 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<UserResponse> getUserInfo() {
-        log.info("/api/v1/user get");
         return ResponseEntity.ok(userService.getUserInfo());
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponse>> getAllUser() {
+        return ResponseEntity.ok(userService.getAllUser());
     }
 
     @PutMapping()

@@ -34,6 +34,12 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderList());
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable int id) {
+        return ResponseEntity.ok(orderService.getOrder(id));
+    }
+
     @PostMapping
     @PreAuthorize(value = "hasAuthority('user:create')")
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderRequest orderRequest) {
