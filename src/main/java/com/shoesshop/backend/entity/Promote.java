@@ -1,9 +1,6 @@
 package com.shoesshop.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -18,7 +15,7 @@ import java.util.Date;
 @Table(name = "promote")
 public class Promote {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String color;
     private double discountValue;

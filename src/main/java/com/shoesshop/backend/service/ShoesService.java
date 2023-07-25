@@ -1,6 +1,7 @@
 package com.shoesshop.backend.service;
 
 import com.shoesshop.backend.dto.ShoesDetailResponse;
+import com.shoesshop.backend.dto.ShoesRequest;
 import com.shoesshop.backend.entity.BrandCategory;
 import com.shoesshop.backend.entity.Favorite;
 import com.shoesshop.backend.entity.Shoes;
@@ -80,6 +81,25 @@ public class ShoesService {
         BrandCategory brandCategory = brandCategoryRepository.findById(brandId).orElseThrow(() -> new NotFoundException("Brand not found with Id: " + brandId));
         shoes.setBrandCategory(brandCategory);
         return shoesRepository.save(shoes);
+    }
+
+    public List<Shoes> addListShoes(List<ShoesRequest> listShoesRequest) {
+        List<Shoes> listShoes = new ArrayList<>();
+        for (ShoesRequest shoesRequest : listShoesRequest) {
+            Shoes shoes = Shoes.builder()
+                    .name(shoesRequest.getName())
+                    .coverImage(shoesRequest.getCoverImage())
+                    .price(shoesRequest.getPrice())
+                    .colors(shoesRequest.getColors())
+                    .priceSales(shoesRequest.getPriceSales())
+                    .status(shoesRequest.getStatus())
+                    .description(shoesRequest.getDescription())
+                    .sizes(shoesRequest.getSizes())
+                    .build();
+            listShoes.add(shoes);
+        }
+
+        return shoesRepository.saveAll(listShoes);
     }
 
     public Map<String, Object> getAllShoes(String name, int price, boolean newest, int brandId, int pageNumber, int pageSize) {

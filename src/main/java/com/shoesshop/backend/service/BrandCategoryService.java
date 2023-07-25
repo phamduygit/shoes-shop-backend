@@ -18,6 +18,10 @@ public class BrandCategoryService {
         return brandCategoryRepository.save(brandCategory);
     }
 
+    public List<BrandCategory> add(List<BrandCategory> listBrand) {
+        return brandCategoryRepository.saveAll(listBrand);
+    }
+
     public Map<String, Object> getAll() {
         Map<String, Object> result = new LinkedHashMap<>();
         List<BrandCategory> categories = brandCategoryRepository.findAll();

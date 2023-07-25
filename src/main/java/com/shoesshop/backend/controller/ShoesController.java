@@ -1,13 +1,12 @@
 package com.shoesshop.backend.controller;
 
 import com.shoesshop.backend.dto.ShoesDetailResponse;
+import com.shoesshop.backend.dto.ShoesRequest;
 import com.shoesshop.backend.entity.Shoes;
 import com.shoesshop.backend.service.ShoesService;
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,17 @@ public class ShoesController {
         result.put("data", shoesService.createNewShoes(shoes, brandId));
         otherResult.put("data", result);
         return new ResponseEntity<>(otherResult, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/create-all")
+    @PreAuthorize("hasAuthority('admin:create')")
+    public ResponseEntity<Map<String, Object>> addListShoes(@RequestBody List<ShoesRequest> listShoesRequest) {
+        List<Shoes> listShoes = new ArrayList<>();
+        Map<String, Object> responseResult = new LinkedHashMap<>();
+        listShoes = shoesService.addListShoes(listShoesRequest);
+        responseResult.put("length", listShoes.size());
+        responseResult.put("data", listShoes);
+        return new ResponseEntity<>(responseResult, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")

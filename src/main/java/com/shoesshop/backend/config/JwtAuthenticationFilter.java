@@ -60,7 +60,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        List<String> approvedPath = Arrays.asList("/api/v1/auth", "/api/v1/shoes", "/api/v1/brand-category", "/api/v1/promote");
+        List<String> approvedPath = Arrays.asList(
+                "/api/v1/auth",
+                "/api/v1/shoes",
+                "/api/v1/brand-category",
+                "/api/v1/promote",
+                "/v2/api-docs",
+                "/v3/api-docs",
+                "/v3/api-docs/",
+                "/swagger-resources",
+                "/swagger-resources/",
+                "/configuration/ui",
+                "/configuration/security",
+                "/swagger-ui/",
+                "/webjars/",
+                "/swagger-ui.html");
 
         if (request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);

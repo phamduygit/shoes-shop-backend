@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,6 +31,12 @@ public class BrandCategoryController {
     @PreAuthorize(value = "hasAuthority('admin:create')")
     public ResponseEntity<BrandCategory> addBranch(@RequestBody BrandCategory brandCategory) {
         return new ResponseEntity<>(brandCategoryService.add(brandCategory), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/add-all")
+    @PreAuthorize(value = "hasAuthority('admin:create')")
+    public ResponseEntity<List<BrandCategory>> addAllBrand(@RequestBody List<BrandCategory> listBrand) {
+        return new ResponseEntity<>(brandCategoryService.add(listBrand), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
