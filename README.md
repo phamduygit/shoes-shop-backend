@@ -24,7 +24,7 @@ This is the admin website used to manage products, orders, users, ads, brands...
 - Hosting and tool: AWS, Docker
 
 ## 3. Database Schema
-![Shoes app](https://github.com/phamduygit/shoes-shop-backend/assets/48823695/d6caddcf-7a3a-40e1-bcee-7bce9a4378d4)
+![Shoes app](https://res.cloudinary.com/dvhhz53rr/image/upload/v1690461639/Shoes_app_rnuurj.png)
 
 
 ## 3. How to build project
