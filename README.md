@@ -38,5 +38,6 @@ In the project directory, you can run:
 ### `./mvnm spring-boot:run`
 Runs the app in the development mode.\
 Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
+Otherwise you can import [JSONFile](https://github.com/phamduygit/shoes-shop-backend/blob/main/Shoes%20Shop.postman_collection.json) to postman to test all of API.
 
 
