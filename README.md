@@ -14,10 +14,16 @@
 # About Backend Server - Spring boot
 This is the admin website used to manage products, orders, users, ads, brands...
 ## 1. Overview
-Link postman: 
+- Deployed AWS Cloud: https://ec2-18-142-252-134.ap-southeast-1.compute.amazonaws.com/swagger-ui/index.html
+- DNS server: https://pmdshoesshop.online/swagger-ui/index.html
+- Postman collection: https://drive.google.com/file/d/1Vv7ZQo-x9x_ocBD872NMTldFUpIV7ZZZ/view?usp=sharing
 
+## 2. Techology and dabatabase
+- Tech: Spring boot, Spring data JPA, Spring Security, JWT
+- Database: MySQL
+- Hosting and tool: AWS, Docker
 
-## 2. Database Schema
+## 3. Database Schema
 ![Shoes app](https://github.com/phamduygit/shoes-shop-backend/assets/48823695/d6caddcf-7a3a-40e1-bcee-7bce9a4378d4)
 
 
