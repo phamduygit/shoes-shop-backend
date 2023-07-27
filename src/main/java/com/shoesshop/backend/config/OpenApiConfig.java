@@ -16,14 +16,14 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 contact = @Contact(
                         name = "Pham Minh Duy",
                         email = "minhduy.bthuy@gmail.com",
-                        url = "facebook.com/phamduy2k"
+                        url = "https://www.linkedin.com/in/phamduy2000/"
                 ),
-                description = "OpenApi documentation for Shoes shop project",
-                title = "OpenApi specification - Shoes Shop",
-                version = "1.0",
+                description = "The API documentation contains detailed information about each endpoint, including request parameters, response formats, and example usage scenarios. You can easily experiment with various API calls directly from this Swagger page, making it convenient for testing and development purposes",
+                title = "Shoes shop API Documentation",
+                version = "1.1",
                 license = @License(
                         name = "Licence name",
-                        url = "https://some-url.com"
+                        url = "https://www.linkedin.com/in/phamduy2000/"
                 ),
                 termsOfService = "Terms of service"
         ),
@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "https://aliboucoding.com/course"
+                        url = "https://pmdshoesshop.online"
                 )
         },
         security = {

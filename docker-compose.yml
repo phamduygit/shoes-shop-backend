@@ -9,20 +9,18 @@ services:
       springboot-mysql-net:
     volumes:
       - my-data-volume:/var/lib/mysql/
+#    restart: on-failure
 
   back-end:
     container_name: shoes-shop-backend
-    image: duybroooo/shoes-shop-backend:1.0
-    # build:
-    #   context: ./
-    #   dockerfile: Dockerfile
+    image: duybroooo/shoes-shop-backend
     ports:
       - "8080:8080"
     depends_on:
       - mysqldb
     networks:
       springboot-mysql-net:
-    restart: on-failure
+#    restart: on-failure
 
 networks:
   springboot-mysql-net:
