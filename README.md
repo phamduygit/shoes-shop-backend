@@ -14,7 +14,7 @@
 # About Backend Server - Spring boot
 This is the admin website used to manage products, orders, users, ads, brands...
 ## 1. Overview
-- Deployed AWS Cloud: https://ec2-18-142-252-134.ap-southeast-1.compute.amazonaws.com/swagger-ui/index.html
+- Deployed AWS Cloud: https://ec2-13-213-11-93.ap-southeast-1.compute.amazonaws.com/swagger-ui/index.html
 - DNS server: https://pmdshoesshop.online/swagger-ui/index.html
 - Postman collection: https://drive.google.com/file/d/1Vv7ZQo-x9x_ocBD872NMTldFUpIV7ZZZ/view?usp=sharing
 
