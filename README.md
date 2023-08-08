@@ -1,7 +1,7 @@
 # Overview Shoes Shope Project
 
 1. Admin website - React
-- Deployed website: https://melodious-beijinho-5a4a13.netlify.app
+- Deployed website: https://pmdshoesshop.netlify.app/
 - Source: https://github.com/phamduygit/shoes-shop-admin-page
 2. Client mobile application - Flutter
 - APK file for Android: https://drive.google.com/file/d/1_6BrRpuQNwS4yxJ3uPHBHtd5UzEJqJ2o/view?usp=sharing
