@@ -62,6 +62,11 @@ public class ShoesController {
         return new ResponseEntity<>(filterdListShoes, HttpStatus.OK);
     }
 
+    @GetMapping("/find-all")
+    public ResponseEntity<List<Shoes>> findAllShoes() {
+        return new ResponseEntity<>(shoesService.findAll(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ShoesDetailResponse> getShoes(@PathVariable int id) {
         ShoesDetailResponse shoes = shoesService.getShoes(id);

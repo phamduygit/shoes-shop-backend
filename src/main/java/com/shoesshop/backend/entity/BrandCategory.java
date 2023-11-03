@@ -23,7 +23,7 @@ public class BrandCategory {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brandCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brandCategory")
     @JsonIgnore
     private List<Shoes> listShoes;
 }

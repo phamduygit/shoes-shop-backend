@@ -86,6 +86,7 @@ public class ShoesService {
     public List<Shoes> addListShoes(List<ShoesRequest> listShoesRequest) {
         List<Shoes> listShoes = new ArrayList<>();
         for (ShoesRequest shoesRequest : listShoesRequest) {
+            BrandCategory brandCategory = brandCategoryRepository.findById(shoesRequest.getBrandId()).orElse(null);
             Shoes shoes = Shoes.builder()
                     .name(shoesRequest.getName())
                     .coverImage(shoesRequest.getCoverImage())
@@ -95,6 +96,7 @@ public class ShoesService {
                     .status(shoesRequest.getStatus())
                     .description(shoesRequest.getDescription())
                     .sizes(shoesRequest.getSizes())
+                    .brandCategory(brandCategory)
                     .build();
             listShoes.add(shoes);
         }
@@ -174,6 +176,10 @@ public class ShoesService {
         Pageable paging = PageRequest.of(pageNumber, pageSize);
         Page<Shoes> filteredListShoes = shoesRepository.findByBrandId(brandId, paging);
         return setUpPaging(responseObject, filteredListShoes);
+    }
+
+    public List<Shoes> findAll() {
+        return shoesRepository.findAll();
     }
 }
 
